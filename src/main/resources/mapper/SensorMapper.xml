@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yifei.dao.SensorMapper">
+  <resultMap id="BaseResultMap" type="com.yifei.bean.Sensor">
+    <id column="sensorid" jdbcType="INTEGER" property="sensorid" />
+    <result column="node" jdbcType="CHAR" property="node" />
+    <result column="loc" jdbcType="CHAR" property="loc" />
+    <result column="phoneNum" jdbcType="CHAR" property="phonenum" />
+  </resultMap>
+  <resultMap id="StatisticMap" type="com.yifei.bean.statisticForSensor">
+    <id column="num" jdbcType="INTEGER" property="total" />
+    <result column="maxv" jdbcType="INTEGER" property="max" />
+    <result column="minv" jdbcType="INTEGER" property="min" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    sensorid, node, loc, phoneNum
+  </sql>
+  <select id="selectByExample" parameterType="com.yifei.bean.SensorExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sensor
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+   <!-- 找出统计资料 -->
+  <select id="selectStaticForSensor"  resultMap="StatisticMap">
+   SELECT COUNT(sensor.sensorid) num,MAX(sensor.sensorid) maxv,MIN(sensor.sensorid) minv FROM sensor;
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sensor
+    where sensorid = #{sensorid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sensor
+    where sensorid = #{sensorid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.yifei.bean.SensorExample">
+    delete from sensor
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yifei.bean.Sensor">
+    insert into sensor (sensorid, node, loc, 
+      phoneNum)
+    values (#{sensorid,jdbcType=INTEGER}, #{node,jdbcType=CHAR}, #{loc,jdbcType=CHAR}, 
+      #{phonenum,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yifei.bean.Sensor">
+    insert into sensor
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sensorid != null">
+        sensorid,
+      </if>
+      <if test="node != null">
+        node,
+      </if>
+      <if test="loc != null">
+        loc,
+      </if>
+      <if test="phonenum != null">
+        phoneNum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sensorid != null">
+        #{sensorid,jdbcType=INTEGER},
+      </if>
+      <if test="node != null">
+        #{node,jdbcType=CHAR},
+      </if>
+      <if test="loc != null">
+        #{loc,jdbcType=CHAR},
+      </if>
+      <if test="phonenum != null">
+        #{phonenum,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.yifei.bean.SensorExample" resultType="java.lang.Long">
+    select count(*) from sensor
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update sensor
+    <set>
+      <if test="record.sensorid != null">
+        sensorid = #{record.sensorid,jdbcType=INTEGER},
+      </if>
+      <if test="record.node != null">
+        node = #{record.node,jdbcType=CHAR},
+      </if>
+      <if test="record.loc != null">
+        loc = #{record.loc,jdbcType=CHAR},
+      </if>
+      <if test="record.phonenum != null">
+        phoneNum = #{record.phonenum,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update sensor
+    set sensorid = #{record.sensorid,jdbcType=INTEGER},
+      node = #{record.node,jdbcType=CHAR},
+      loc = #{record.loc,jdbcType=CHAR},
+      phoneNum = #{record.phonenum,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yifei.bean.Sensor">
+    update sensor
+    <set>
+      <if test="node != null">
+        node = #{node,jdbcType=CHAR},
+      </if>
+      <if test="loc != null">
+        loc = #{loc,jdbcType=CHAR},
+      </if>
+      <if test="phonenum != null">
+        phoneNum = #{phonenum,jdbcType=CHAR},
+      </if>
+    </set>
+    where sensorid = #{sensorid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yifei.bean.Sensor">
+    update sensor
+    set node = #{node,jdbcType=CHAR},
+      loc = #{loc,jdbcType=CHAR},
+      phoneNum = #{phonenum,jdbcType=CHAR}
+    where sensorid = #{sensorid,jdbcType=INTEGER}
+  </update>
+</mapper>
